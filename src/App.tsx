@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext, useMemo } from 'react'
+import { useState, useEffect, createContext } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Web3 from 'web3'
 import { abi, address } from '@config/contract'

@@ -1,6 +1,5 @@
 
-import { useCallback, useContext, Children } from 'react'
-import { abi, address } from '@config/contract';
+import { useCallback, useContext } from 'react'
 import { AuthContext } from '@/App'
 import Button from '@/ui/button'
 import { Status } from '@/ui/ui'
