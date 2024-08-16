@@ -59,23 +59,6 @@ const Home = () => {
             push("<span style={{ borderBottom: '1px dashed #fff', minWidth: '5px', display: 'inline-block' }} onKeyDown={handleChangeContent} contentEditable>str</span>")
           </Button>
         </>}
-        {/* {!context.connect ? (
-          <p className="lead">
-            Please install MetaMask wallet to continue.
-          </p>
-        ) : (
-          <>
-            <p className="lead">
-              Please connect your MetaMask wallet to continue.
-            </p>
-          </>
-        )}
-
-        {context.connectError !== null && (
-          <p className="lead error-text">
-            Error: {context.connectError}
-          </p>
-        )} */}
       </Main>
     </>
   )
