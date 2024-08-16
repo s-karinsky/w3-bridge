@@ -1,30 +1,32 @@
-import type { Web3ReactHooks } from '@web3-react/core'
+import styled from 'styled-components'
 
-export default function Status({
-  isActivating,
-  isActive,
-  error,
-  withText,
-}: {
-  isActivating: ReturnType<Web3ReactHooks['useIsActivating']>
-  isActive: ReturnType<Web3ReactHooks['useIsActive']>
-  error?: Error
-  withText?: boolean
-}) {
-  return (
-    <div>
-      {error ? (
-        <>
-          🔴 {error.name ?? 'Error'}
-          {error.message ? `: ${error.message}` : null}
-        </>
-      ) : isActivating ? (
-        <>🟡 {withText && 'Connecting'}</>
-      ) : isActive ? (
-        <>🟢 {withText && 'Connected'}</>
-      ) : (
-        <>⚪️ {withText && 'Disconnected'}</>
-      )}
-    </div>
-  )
-}
+const Status = styled.div<{ value?: null | string, height?: string | number, attach?: 'top' | 'bottom' | 'both' }>`
+  background: ${({ value }) => !value ? 'transparent' : 'linear-gradient(to right, #EF2D56 0, #DCED31 50%, #0CCE6B 100%)'};
+  background-position: ${({ value }) => {
+    if (!value) return '0 0';
+    switch (value) {
+      case 'error':
+        return '0 0';
+      
+      case 'pending':
+        return '50% 0';
+    
+      case 'success':
+        return '100% 0';
+    }
+  }};
+  height: ${({ height }) => typeof height === 'number' ? `${height}px` : (height || '8px')};
+  border-radius: ${({ attach }) => {
+    if (!attach || attach === 'both') return 0;
+    if (attach === 'top') return '0 0 8px 8px';
+    if (attach === 'bottom') return '8px 8px 0 0';
+  }};
+  background-size: 400% auto;
+  box-sizing: border-box;
+  border: 1px solid #ffffff33;
+  box-shadow: 0 0 2px 2px #00000033;
+  transition: 0.3s ease;
+  transition-property: background-color, background-position, border-color, box-shadow;
+`
+
+export default Status
