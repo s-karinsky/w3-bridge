@@ -12,7 +12,7 @@ const Status = styled.div<{ value?: null | string, height?: string | number, att
         return '50% 0';
     
       case 'success':
-        return '100% 0';
+        return '99.9% 0';
     }
   }};
   height: ${({ height }) => typeof height === 'number' ? `${height}px` : (height || '8px')};

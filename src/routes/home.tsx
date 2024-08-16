@@ -1,9 +1,10 @@
 
-import { AuthContext } from '@/App';
-import Button from '@/ui/button';
-import { Status } from '@/ui/ui';
-import { useContext } from 'react';
-import styled from 'styled-components';
+import { useCallback, useContext, Children } from 'react'
+import { abi, address } from '@config/contract';
+import { AuthContext } from '@/App'
+import Button from '@/ui/button'
+import { Status } from '@/ui/ui'
+import styled from 'styled-components'
 
 
 const Main = styled.main`
@@ -14,12 +15,28 @@ const Main = styled.main`
   align-items: stretch;
   justify-content: center;
   flex-direction: column;
-
 `
+
+const Argument = styled.span`
+  border-bottom: 1px dashed #fff;
+  min-width: 10px;
+  display: inline-block;
+`
+
+const Arguments = ({ children }: { children: React.ReactNode }) => (<Argument
+  onKeyDown={(e: any) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      e.target.blur()
+    }
+  }}
+  children={children}
+  contentEditable  
+/>)
 
 const Home = () => {
   const context = useContext(AuthContext)
-  const { isAuth, isLoggingIn } = context
+  const { contract, isAuth, isLoggingIn } = context
 
   const handleChangeContent = (e: any) => {
     const key = e.key
@@ -27,8 +44,40 @@ const Home = () => {
       e.preventDefault()
       e.target.blur()
     }
-    
   }
+
+
+  const contractMethod = useCallback((method: string, ...args: any[]) => {
+    return async (e: any) => {
+      e.preventDefault();
+
+      try {
+        // const networkType = await contract.methods.web3.eth.net.getNetworkType();
+        const isEIP1559Supported = false // networkType !== 'private' && networkType !== 'testnet';
+
+        const txParams = {
+          from: context.account,
+          ...(isEIP1559Supported ? { maxFeePerGas: '5000000000', maxPriorityFeePerGas: '1000000000' } : { gasPrice: '5000000000' })
+        };
+
+        contract.methods[method](...args).send(txParams)
+          .on('transactionHash', function (hash: any) {
+            console.log('hash', hash);
+          })
+          .on('confirmation', function (confirmationNumber: any, receipt: any) {
+            console.log('confirmation', confirmationNumber, receipt);
+          })
+          .on('receipt', function (receipt: any) {
+            console.log(receipt);
+          })
+          .on('error', function (error: any, receipt: any) {
+            console.log('error', error, receipt);
+          });
+      } catch (error) {
+        console.error('Error sending transaction:', error);
+      }
+    };
+  }, [contract]);
 
   return (
     <>
@@ -50,13 +99,15 @@ const Home = () => {
         {isAuth && <>
           <Button
             attach='both'
+            onClick={contractMethod('getByIndex', 0)}
           >
-            getByIndex(<span style={{ borderBottom: '1px dashed #fff', minWidth: '5px', display: 'inline-block' }} onKeyDown={handleChangeContent} contentEditable>0</span>)
+            getByIndex(<Arguments>0</Arguments>)
           </Button>
           <Button
             attach='top'
+            onClick={contractMethod('push', 'str')}
           >
-            push("<span style={{ borderBottom: '1px dashed #fff', minWidth: '5px', display: 'inline-block' }} onKeyDown={handleChangeContent} contentEditable>str</span>")
+            push("<span style={{ borderBottom: '1px dashed #fff', minWidth: '10px', display: 'inline-block' }} onKeyDown={handleChangeContent} contentEditable>str</span>")
           </Button>
         </>}
       </Main>

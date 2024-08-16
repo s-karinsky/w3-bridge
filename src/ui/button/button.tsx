@@ -13,6 +13,10 @@ const Button = styled.button <{ attach?: 'top' | 'bottom' | 'both', block?: bool
   transition: 0.3s ease;
   transition-property: background-color, box-shadow;
 
+  &:not(:first-child) {
+    box-shadow: 0 0 2px 2px #00000011;
+  }
+
   &:active,
   &:focus {
     outline: none;
@@ -30,6 +34,11 @@ const Button = styled.button <{ attach?: 'top' | 'bottom' | 'both', block?: bool
     if (attach === 'top') return '0 0 8px 8px';
     if (attach === 'bottom') return '8px 8px 0 0';
   }};
+
+  &:has(+ &) {
+    position: relative;
+    z-index: 10;
+  }
 `
 
 export default Button

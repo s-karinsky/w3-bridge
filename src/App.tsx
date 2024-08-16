@@ -1,6 +1,7 @@
-import { useState, useEffect, createContext } from 'react'
+import { useState, useEffect, createContext, useMemo } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Web3 from 'web3'
+import { abi, address } from '@config/contract'
 
 // Components
 import Layout from '@components/layout'
@@ -14,6 +15,7 @@ type AuthContextProps = {
   account?: any
   connectError?: string | null
   isLoggingIn?: boolean
+  contract?: any
   connect?: () => any
 }
 
@@ -24,7 +26,6 @@ export const AuthContext = createContext<AuthContextProps>({
 
 function App() {
   const web3 = new Web3(window.ethereum)
-  console.log(window.ethereum);
   
   const [isAuth, setIsAuth] = useState(false)
   const [isLoggingIn, setIsLoggingIn] = useState(false)
@@ -39,23 +40,24 @@ function App() {
     account,
     isLoggingIn,
     connect: connectWallet,
+    contract: new web3.eth.Contract(abi, address)
   }
 
   async function checkWalletConnection() {
     const ethereum = window.ethereum;
-    await setEthWallet((!ethereum ? false : true));
+    setEthWallet((!ethereum ? false : true));
 
     // If installed, get user's accounts.
     if (ethereum) {
       const userAcc = await web3.eth.getAccounts();
 
       if (userAcc.length > 0) {
-        await setAccount(userAcc[0]);
-        await setIsAuth(true);
+        setAccount(userAcc[0]);
+        setIsAuth(true);
       } else {
         if (isAuth) {
-          await setAccount(null);
-          await setIsAuth(false);
+          setAccount(null);
+          setIsAuth(false);
         }
       }
     }
@@ -71,18 +73,18 @@ function App() {
       }
       setIsLoggingIn(true)
       await window.ethereum.request({ method: 'eth_requestAccounts' });
-      await setIsAuth(true);
+      setIsAuth(true);
 
       // Reset error
       if (connectError !== null) { setConnectError(null); }
       setIsLoggingIn(false)
       // @ts-ignore
       window.location.reload(false)
-      return;
+      return
     } catch (error: any) {
       setConnectError(error.message);
       console.error(error);
-      return;
+      return
     }
   }
 
