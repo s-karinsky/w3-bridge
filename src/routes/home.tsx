@@ -164,10 +164,10 @@ const Home = () => {
             </div>}
           </Li>
           <Li disabled={currentStep < 2} current={currentStep === 2}>
-            <Dropdown onChange={e => setDirection(e.target.value)}>
-              <option>Select direction</option>
-              <option>Network 1 → Network 2</option>
-              <option>Network 2 → Network 1</option>
+            <Dropdown value={direction} onChange={e => setDirection(e.target.value)}>
+              <option value='0'>Select direction</option>
+              <option value='1'>Network 1 → Network 2</option>
+              <option value='2'>Network 2 → Network 1</option>
             </Dropdown>
           </Li>
           <Li disabled={currentStep < 3} current={currentStep === 3}>
